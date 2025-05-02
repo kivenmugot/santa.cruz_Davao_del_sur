@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Signup System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f1720;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 400px;
+            height: 500px;
+            perspective: 1000px;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #0f1720, #1a2736);
+            box-shadow: 0 8px 32px rgba(0, 255, 255, 0.3);
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        .logo svg {
+            width: 100px;
+            height: 100px;
+            fill: #00e5e5;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 1s ease;
+        }
+
+        .login-container, .signup-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+            background: linear-gradient(135deg, rgba(0, 229, 229, 0.1), rgba(0, 229, 229, 0.05));
+            border: 1px solid rgba(0, 229, 229, 0.3);
+            overflow: hidden;
+        }
+
+        .login-container {
+            z-index: 2;
+        }
+
+        .signup-container {
+            transform: rotateY(180deg);
+        }
+
+        .card.flip {
+            transform: rotateY(180deg);
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        .split-design {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: linear-gradient(135deg, #00e5e5, #007bff);
+            opacity: 0.7;
+            z-index: -1;
+            transform: rotate(-15deg) translateX(-30%) translateY(-20%);
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 15px 15px 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            box-shadow: 0 0 10px rgba(0, 229, 229, 0.5);
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(to right, #00e5e5, #00a1a1);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #00c5c5, #008585);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 229, 229, 0.4);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .switch-form p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .switch-form a {
+            color: #00e5e5;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 229, 229, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(0, 229, 229, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 229, 229, 0);
+            }
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0f1720, #1a2736);
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0, 255, 255, 0.3);
+            transform: scale(0.7);
+            transition: all 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #00e5e5, #00a1a1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #fff;
+        }
+
+        .modal h2 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .modal p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
+
+      
+        .loader {
+            display: none;
+            width: 24px;
+            height: 24px;
+            margin: 0 auto;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+      
+        .form-group.error input {
+            border: 1px solid #ff4d4d;
+            box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-left: 15px;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <svg viewBox="0 0 100 100" xmlns="logo.jpg">
+            <path d="M50 10 C22 10 10 22 10 50 C10 78 22 90 50 90 C78 90 90 78 90 50 C90 22 78 10 50 10 Z M50 30 C39 30 30 39 30 50 C30 61 39 70 50 70 C61 70 70 61 70 50 C70 39 61 30 50 30 Z" />
+        </svg>
+    </div>
+
+    <div class="container">
+        <div class="card">
+           
+            <div class="login-container">
+                <div class="split-design"></div>
+                <div class="header">
+                    <h1>Login</h1>
+                    <p>WELCOME BACK! We're happy to have you with us back again if you need anything, we're here to help.</p>
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <i>👤</i>
+                        <input type="text" id="login-username" placeholder="Username" required>
+                        <span class="error-message">Username is required</span>
+                    </div>
+                    <div class="form-group">
+                        <i>🔒</i>
+                        <input type="password" id="login-password" placeholder="Password" required>
+                        <span class="error-message">Password is required</span>
+                    </div>
+                    <button type="submit" id="login-btn">
+                        <span>Login</span>
+                        <div class="loader"></div>
+                    </button>
+                </form>
+                <div class="switch-form">
+                    <p>Don't have an account? <a id="show-signup">Sign up</a></p>
+                </div>
+            </div>
+
+          
+            <div class="signup-container">
+                <div class="split-design"></div>
+                <div class="header">
+                    <h1>Sign up</h1>
+                    <p>WELCOME! We're delighted to have you here. If you need any assistance, feel free to reach out.</p>
+                </div>
+                <form id="signup-form">
+                    <div class="form-group">
+                        <i>👤</i>
+                        <input type="text" id="signup-username" placeholder="Username" required>
+                        <span class="error-message">Username should be at least 3 characters</span>
+                    </div>
+                    <div class="form-group">
+                        <i>✉️</i>
+                        <input type="email" id="signup-email" placeholder="Email" required>
+                        <span class="error-message">Please enter a valid email address</span>
+                    </div>
+                    <div class="form-group">
+                        <i>🔒</i>
+                        <input type="password" id="signup-password" placeholder="Password" required>
+                        <span class="error-message">Password should be at least 6 characters</span>
+                    </div>
+                    <button type="submit" id="signup-btn">
+                        <span>Sign up</span>
+                        <div class="loader"></div>
+                    </button>
+                </form>
+                <div class="switch-form">
+                    <p>Already have an account? <a id="show-login">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path>
+                </svg>
+            </div>
+            <h2>Success!</h2>
+            <p id="modal-message">Your account has been created successfully.</p>
+            <button id="modal-btn">Continue</button>
+        </div>
+    </div>
+
+    <script>
+      
+        const card = document.querySelector('.card');
+        const showSignupBtn = document.getElementById('show-signup');
+        const showLoginBtn = document.getElementById('show-login');
+        const signupForm = document.getElementById('signup-form');
+        const loginForm = document.getElementById('login-form');
+        const signupUsername = document.getElementById('signup-username');
+        const signupEmail = document.getElementById('signup-email');
+        const signupPassword = document.getElementById('signup-password');
+        const loginUsername = document.getElementById('login-username');
+        const loginPassword = document.getElementById('login-password');
+        const successModal = document.getElementById('success-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const modalBtn = document.getElementById('modal-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+
+      
+        function getStoredUsers() {
+            return JSON.parse(localStorage.getItem('users')) || [];
+        }
+        
+        let users = getStoredUsers();
+
+      
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const x = e.clientX - e.target.getBoundingClientRect().left;
+                const y = e.clientY - e.target.getBoundingClientRect().top;
+                
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        
+        showSignupBtn.addEventListener('click', () => {
+            card.classList.add('flip');
+        });
+
+       
+        showLoginBtn.addEventListener('click', () => {
+            card.classList.remove('flip');
+        });
+
+        
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            
+            resetValidationErrors(signupForm);
+            
+          
+            let isValid = true;
+            
+            if (signupUsername.value.trim().length < 3) {
+                showError(signupUsername, 'Username should be at least 3 characters');
+                isValid = false;
+            }
+            
+            if (!isValidEmail(signupEmail.value)) {
+                showError(signupEmail, 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            if (signupPassword.value.length < 6) {
+                showError(signupPassword, 'Password should be at least 6 characters');
+                isValid = false;
+            }
+            
+            if (isValid) {
+
+                showLoading(signupBtn);
+                
+              
+                setTimeout(() => {
+                  
+                    const newUser = {
+                        username: signupUsername.value,
+                        email: signupEmail.value,
+                        password: signupPassword.value 
+                    };
+                    
+                    users = getStoredUsers(); 
+                    users.push(newUser);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    console.log("User registered:", newUser);
+                    console.log("Updated users in storage:", users);
+                    
+                  
+                    signupForm.reset();
+                    
+                   
+                    hideLoading(signupBtn);
+                    
+                    showModal('Account created successfully! You can now login.', () => {
+                        card.classList.remove('flip');
+                    });
+                }, 1500);
+            }
+        });
+
+       
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+           
+            resetValidationErrors(loginForm);
+            
+           
+            const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+            
+           
+            let isValid = true;
+            
+            if (loginUsername.value.trim() === '') {
+                showError(loginUsername, 'Username is required');
+                isValid = false;
+            }
+            
+            if (loginPassword.value === '') {
+                showError(loginPassword, 'Password is required');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                
+                showLoading(loginBtn);
+                
+               
+                setTimeout(() => {
+                  
+                    const foundUser = storedUsers.find(user => 
+                        user.username === loginUsername.value && 
+                        user.password === loginPassword.value
+                    );
+                    
+                    console.log("Login attempt for:", loginUsername.value);
+                    console.log("Password entered:", loginPassword.value);
+                    console.log("Users in storage:", storedUsers);
+                    console.log("Found user:", foundUser);
+                    hideLoading(loginBtn);
+                    
+                    if (foundUser) {
+                        showModal('Login successful! Redirecting to dashboard...', () => {
+                            
+                            window.location.href = 'menu.html';
+                        });
+                    } else {
+                        showError(loginUsername, 'Invalid username or password');
+                        showError(loginPassword, 'Invalid username or password');
+                    }
+                }, 1500);
+            }
+        });
+        function isValidEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+        function showError(input, message) {
+            const formGroup = input.parentElement;
+            const errorMessage = formGroup.querySelector('.error-message');
+            formGroup.classList.add('error');
+            errorMessage.textContent = message;
+        }
+        function resetValidationErrors(form) {
+            form.querySelectorAll('.form-group').forEach(formGroup => {
+                formGroup.classList.remove('error');
+            });
+        }
+        function showLoading(button) {
+            const textSpan = button.querySelector('span');
+            const loader = button.querySelector('.loader');
+            textSpan.style.display = 'none';
+            loader.style.display = 'block';
+            button.disabled = true;
+        }
+        function hideLoading(button) {
+            const textSpan = button.querySelector('span');
+            const loader = button.querySelector('.loader');
+            textSpan.style.display = 'block';
+            loader.style.display = 'none';
+            button.disabled = false;
+        }
+        function showModal(message, callback) {
+            modalMessage.textContent = message;
+            successModal.classList.add('active');
+            
+            modalBtn.onclick = () => {
+                successModal.classList.remove('active');
+                if (callback) callback();
+            };
+        }
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.style.transform = 'translateY(-5px)';
+                input.style.boxShadow = '0 0 10px rgba(0, 229, 229, 0.5)';
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.style.transform = 'translateY(0)';
+                input.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
