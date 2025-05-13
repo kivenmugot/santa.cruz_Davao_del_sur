@@ -191,7 +191,11 @@
     const successModal = document.getElementById('success-modal');
     const modalMessage = document.getElementById('modal-message');
 
-    const users = [];
+    // Changed from const to let and load from localStorage
+    let users = [];
+    if (localStorage.getItem('users')) {
+      users = JSON.parse(localStorage.getItem('users'));
+    }
 
     function toggleForms() {
       wrapper.classList.toggle('show-signup');
@@ -262,6 +266,9 @@
       if (!valid) return;
 
       users.push({ email, password });
+      // Add this line to save users to localStorage
+      localStorage.setItem('users', JSON.stringify(users));
+      
       modalMessage.textContent = 'Signup Successful!';
       successModal.classList.add('active');
       setTimeout(() => {
@@ -270,5 +277,6 @@
       }, 2000);
     });
   </script>
+
 </body>
 </html>
